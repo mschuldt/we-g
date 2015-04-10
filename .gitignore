@@ -1,1 +1,4 @@
 *.class
+TAGS
+_*
+.emacs.desktop
