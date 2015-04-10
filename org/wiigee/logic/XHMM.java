@@ -25,10 +25,10 @@ public class XHMM extends HMM {
     public XHMM(int numStates, int numObservations) {
         super(numStates, numObservations);
     }
-    
+
     @Override
     public void train(Vector<int[]> trainsequence) {
-        
+
     }
 
     private double[][] getScaledForward(int[] sequence) {
@@ -68,18 +68,18 @@ public class XHMM extends HMM {
         return retVal;
     }
 
-   private double getScalingDenominator(int t, int[] sequence) {
-       double retVal = 0.0;
-       double[][] fwd = this.forwardProc(sequence);
-       double[][] sfwd = this.getScaledForward(sequence);
-       double[][] helper = new double[sfwd.length][sfwd[0].length];
+    private double getScalingDenominator(int t, int[] sequence) {
+        double retVal = 0.0;
+        double[][] fwd = this.forwardProc(sequence);
+        double[][] sfwd = this.getScaledForward(sequence);
+        double[][] helper = new double[sfwd.length][sfwd[0].length];
 
-       if(t==0) {
-           
-       }
+        if(t==0) {
+
+        }
 
 
-       return retVal;
-   }
+        return retVal;
+    }
 
 }

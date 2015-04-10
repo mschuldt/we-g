@@ -175,12 +175,12 @@ public class Device {
 
         // don't need to create an event if filtered away
         if (vector != null) {
-            // 	calculate the absolute value for the accelerationevent
+            //  calculate the absolute value for the accelerationevent
             double absvalue = Math.sqrt((vector[0] * vector[0]) +
-                    (vector[1] * vector[1]) + (vector[2] * vector[2]));
+                                        (vector[1] * vector[1]) + (vector[2] * vector[2]));
 
             AccelerationEvent w = new AccelerationEvent(this,
-                    vector[0], vector[1], vector[2], absvalue);
+                                                        vector[0], vector[1], vector[2], absvalue);
             for (int i = 0; i < this.accelerationlistener.size(); i++) {
                 this.accelerationlistener.get(i).accelerationReceived(w);
             }
@@ -190,7 +190,7 @@ public class Device {
 
     /** Fires a button pressed event.
      * @param button
-     * 		Integer value of the pressed button.
+     *          Integer value of the pressed button.
      */
     public void fireButtonPressedEvent(int button) {
         ButtonPressedEvent w = new ButtonPressedEvent(this, button);

@@ -17,7 +17,7 @@ public abstract class ProcessingUnit implements AccelerationListener, ButtonList
 
     // Classifier
     protected Classifier classifier;
-    
+
     // Listener
     private Vector<GestureListener> gesturelistener = new Vector<GestureListener>();
 
