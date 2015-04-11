@@ -123,6 +123,13 @@ public class GestureModel {
      */
     public double matches(Gesture gesture) {
         int[] sequence = quantizer.getObservationSequence(gesture);
+        if (false){
+            System.out.println("*********quantizer groups:********");
+            System.out.println("numstates: " + numStates);
+            for (int i = 0; i < numStates; i++){
+                System.out.println(sequence[i]);
+            }
+        }
         return this.markovmodell.getProbability(sequence);
     }
 

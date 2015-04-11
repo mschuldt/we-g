@@ -198,7 +198,7 @@ public class Quantizer {
                 }
                 groups[i][j] = 0;
             }
-            groups[row][j] = 1; // guppe gesetzt
+            groups[row][j] = 1; // guppe gesetzt => "group set"
         }
 
         // Debug output
@@ -225,8 +225,8 @@ public class Quantizer {
 
         // Log.write("Visible symbol sequence: ");
 
-        for (int j = 0; j < groups[0].length; j++) { // spalten
-            for (int i = 0; i < groups.length; i++) { // zeilen
+        for (int j = 0; j < groups[0].length; j++) { // spalten => 'columns'
+            for (int i = 0; i < groups.length; i++) { // zeilen => 'rows'
                 if (groups[i][j] == 1) {
                     // Log.write(" "+ i);
                     sequence.add(i);

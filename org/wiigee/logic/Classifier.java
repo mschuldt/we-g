@@ -47,6 +47,7 @@ public class Classifier {
         //Log.write("Recognizing gesture...");
 
         // Wert im Nenner berechnen, nach Bayes
+        //google translate: "Calculate value in the denominator, Bayesian"
         double sum = 0;
         for(int i=0; i<this.gesturemodel.size(); i++) {
             sum+=this.gesturemodel.elementAt(i).getDefaultProbability()*

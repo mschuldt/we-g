@@ -41,11 +41,13 @@ public class DirectionalEquivalenceFilter extends Filter {
     }
 
     public void reset() {
-        this.sensivity=0.2;
+        this.sensivity=0.4;
         this.reference = new double[] {0.0, 0.0, 0.0};
     }
 
     public double[] filterAlgorithm(double[] vector) {
+        //System.out.printf("\nvector = <%f, %f, %f>\n", vector[0], vector[1],  vector[2]);
+        //System.out.printf("reference = <%f, %f, %f>\n", reference[0], reference[1],  reference[2]);
         if(vector[0]<reference[0]-this.sensivity ||
            vector[0]>reference[0]+this.sensivity ||
            vector[1]<reference[1]-this.sensivity ||
