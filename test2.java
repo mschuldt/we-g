@@ -82,25 +82,31 @@ public class test2{
         device.setCloseGestureButton(closeGestureButton);
         device.setRecognitionButton(recognitionButton);
 
-        //train gestures
-        train_gesture(0, "gesture_recordings/circle/", 14);
-        train_gesture(1, "gesture_recordings/square/", 14);
+        //train
+        train_gesture(0, "gesture_recordings/square2/", 14);
+        train_gesture(1, "gesture_recordings/up_down/", 14);
         train_gesture(2, "gesture_recordings/z/", 14);
-        train_gesture(3, "gesture_recordings/back_and_forth/", 14);
-        train_gesture(4, "gesture_recordings/roll_flip/", 14);
+        train_gesture(3, "gesture_recordings/roll_flip/", 14);
 
-        //save models
-        device.saveGesture(0, "gesture_recordings/circle/model");
-        device.saveGesture(1, "gesture_recordings/square/model");
+        //save
+        device.saveGesture(0, "gesture_recordings/square2/model");
+        device.saveGesture(1, "gesture_recordings/up_down/model");
         device.saveGesture(2, "gesture_recordings/z/model");
-        device.saveGesture(3, "gesture_recordings/back_and_forth/model");
-        device.saveGesture(4, "gesture_recordings/roll_flip/model");
+        device.saveGesture(3, "gesture_recordings/roll_flip/model");
 
-        //test recognition
-        recognize_gesture("gesture_recordings/circle/14.csv");
-        recognize_gesture("gesture_recordings/square/14.csv");
+        //test
+        recognize_gesture("gesture_recordings/square2/14.csv");
+        recognize_gesture("gesture_recordings/square2/15.csv");
+        recognize_gesture("gesture_recordings/square2/16.csv");
+
+        recognize_gesture("gesture_recordings/up_down/14.csv");
+        recognize_gesture("gesture_recordings/up_down/15.csv");
+
         recognize_gesture("gesture_recordings/z/14.csv");
-        recognize_gesture("gesture_recordings/back_and_forth/14.csv");
+
         recognize_gesture("gesture_recordings/roll_flip/14.csv");
+        recognize_gesture("gesture_recordings/roll_flip/15.csv");
+        recognize_gesture("gesture_recordings/roll_flip/16.csv");
+
     }
 }
