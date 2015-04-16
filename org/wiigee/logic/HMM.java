@@ -216,6 +216,45 @@ public class HMM {
         return f;
     }
 
+    protected double[] forwardProc2(int[] o){
+        //f holds the probabilities for the previous paths
+        double[] f = new double[numStates];
+        double[] s = new double[numStates];
+        double[] tmp;
+        for (int l = 0; l < f.length; l++) {
+            /*
+              the partial probability at t = 0
+              is the initial probability multiplied by the
+              associated emission probability
+            */
+            s[l] = pi[l] * b[l][o[0]];
+        }
+        for (int i = 1; i < o.length; i++) {
+            for (int k = 0; k < f.length; k++) {
+                double sum = 0;
+                for (int l = 0; l < numStates; l++) {
+                    /*f[l][i-1] is the previous path probability
+                      to state l.
+                      a[l][k] is the probability of transitioning
+                      to from that previous state the this one.
+                      In the end, `sum` is the probability that
+                      we will be in state k
+                    */
+                    sum += s[l] * a[l][k];
+                }
+                /* sum * b[k][o[i]] is the probability of begin
+                 * in state k times the probability of the
+                 * observation at k
+                 */
+                f[k] = sum * b[k][o[i]];
+            }
+            tmp = f;
+            f = s;
+            s = tmp;
+        }
+        return s;
+    }
+
     /**
      * Returns the probability that a observation sequence O belongs
      * to this Hidden Markov Model without using the bayes classifier.
@@ -224,15 +263,24 @@ public class HMM {
      * @param o observation sequence
      * @return probability that sequence o belongs to this hmm
      */
+    // public double getProbability(int[] o) {
+    //     double prob = 0.0;
+    //     double[][] forward = this.forwardProc(o);
+    //     //	add probabilities
+    //     for (int i = 0; i < forward.length; i++) { // for every state
+    //         prob += forward[i][forward[i].length - 1];
+    //     }
+    //     return prob;
+    // }
     public double getProbability(int[] o) {
         double prob = 0.0;
-        double[][] forward = this.forwardProc(o);
+        double[] forward = this.forwardProc2(o);
         //	add probabilities
         for (int i = 0; i < forward.length; i++) { // for every state
-            prob += forward[i][forward[i].length - 1];
+            prob += forward[i];
         }
         return prob;
-    }
+    }    
 
 
     /**
