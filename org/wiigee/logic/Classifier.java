@@ -49,9 +49,13 @@ public class Classifier {
         // Wert im Nenner berechnen, nach Bayes
         //google translate: "Calculate value in the denominator, Bayesian"
         double sum = 0;
-        for(int i=0; i<this.gesturemodel.size(); i++) {
-            sum+=this.gesturemodel.elementAt(i).getDefaultProbability()*
-                this.gesturemodel.elementAt(i).matches(g);
+        int size = this.gesturemodel.size();
+        double[] matchProbs = new double[size];
+        double prob;
+        for(int i=0; i<size; i++) {
+            prob = this.gesturemodel.elementAt(i).matches(g);
+            matchProbs[i] = prob;
+            sum += this.gesturemodel.elementAt(i).getDefaultProbability()*prob;
         }
 
         int recognized = -1; // which gesture has been recognized
@@ -60,7 +64,7 @@ public class Classifier {
         double probmodel = 0; // temporal value for bayes algorithm
         for(int i=0; i<this.gesturemodel.size(); i++) {
             //this.gesturemodel.elementAt(i).print(); // Debug
-            double tmpgesture = this.gesturemodel.elementAt(i).matches(g);
+            double tmpgesture = matchProbs[i];
             double tmpmodel = this.gesturemodel.elementAt(i).getDefaultProbability();
 
             if(((tmpmodel*tmpgesture)/sum)>recogprob) {
