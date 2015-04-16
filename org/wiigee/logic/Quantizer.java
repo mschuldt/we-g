@@ -212,6 +212,25 @@ public class Quantizer {
 
     }
 
+    public int deriveGroup(AccelerationEvent acc){
+        double a, b, c, d;
+        double minDist = Double.MAX_VALUE;
+        int minGroup=0;
+        double[]ref;
+        for (int i = 0; i < this.map.length; i++){
+            ref = this.map[i];
+            a = ref[0] - acc.getX();
+            b = ref[1] - acc.getY();
+            c = ref[2] - acc.getZ();
+            d = Math.sqrt(a*a + b*b + c*c);
+            if (d < minDist){
+                minDist = d;
+                minGroup = i;
+            }
+        }
+        return minGroup;
+    }
+
     /**
      * With this method you can transform a gesture to a discrete symbol
      * sequence with values between 0 and granularity (number of observations).
@@ -220,40 +239,62 @@ public class Quantizer {
      *            Gesture to get the observationsequence to.
      */
     public int[] getObservationSequence(Gesture gesture) {
-        int[][] groups = this.deriveGroups(gesture);
-        Vector<Integer> sequence = new Vector<Integer>();
+        Vector<AccelerationEvent> data = gesture.getData();
+        int size = data.size();
+        int last =0;
 
-        // Log.write("Visible symbol sequence: ");
+        if (size < this.numStates) size = this.numStates;
 
-        for (int j = 0; j < groups[0].length; j++) { // spalten => 'columns'
-            for (int i = 0; i < groups.length; i++) { // zeilen => 'rows'
-                if (groups[i][j] == 1) {
-                    // Log.write(" "+ i);
-                    sequence.add(i);
-                    break;
-                }
-            }
+        int[] groups = new int[size];
+        int i;
+        for (i = 0; i < data.size(); i++) {
+            groups[i] = last = deriveGroup(data.elementAt(i));
         }
 
-        // die sequenz darf nicht zu kurz sein... mindestens so lang
-        // wie die anzahl der zustände. weil sonst die formeln nicht klappen.
-        // english: this is very dirty! it have to be here because if not
-        // too short sequences would cause an error. i've to think about a
-        // better resolution than copying the old value a few time.
-        while (sequence.size() < this.numStates) {
-            sequence.add(sequence.elementAt(sequence.size() - 1));
-            // Log.write(" "+sequence.elementAt(sequence.size()-1));
-        }
+        for(;i < size;i++) groups[i] = last;
 
-        // Log.write("");
+        // return groups;
 
-        int[] out = new int[sequence.size()];
-        for (int i = 0; i < sequence.size(); i++) {
-            out[i] = sequence.elementAt(i);
-        }
+        // int[][] groups = this.deriveGroups(gesture);
+        // Vector<Integer> sequence = new Vector<Integer>();
 
-        return out;
+        // // Log.write("Visible symbol sequence: ");
+
+        // for (int j = 0; j < groups[0].length; j++) { // spalten => 'columns'
+        //     for (int i = 0; i < groups.length; i++) { // zeilen => 'rows'
+        //         if (groups[i][j] == 1) {
+        //             // Log.write(" "+ i);
+        //             sequence.add(i);
+        //             break;
+        //         }
+        //     }
+        // }
+        // //'sequence' is a list of numbers corresponding to centroids
+        // // on for each accelerometer measurement
+
+
+        // // die sequenz darf nicht zu kurz sein... mindestens so lang
+        // // wie die anzahl der zustände. weil sonst die formeln nicht klappen.
+        // //
+        // // ENGLISH: this is very dirty! it have to be here because if not
+        // // too short sequences would cause an error. i've to think about a
+        // // better resolution than copying the old value a few time.
+        // while (sequence.size() < this.numStates) {
+        //     sequence.add(sequence.elementAt(sequence.size() - 1));
+        //     // Log.write(" "+sequence.elementAt(sequence.size()-1));
+        // }
+
+        // // Log.write("");
+
+        // //copy 'sequence' into 'out'
+        // int[] out = new int[sequence.size()];
+        // for (int i = 0; i < sequence.size(); i++) {
+        //     out[i] = sequence.elementAt(i);
+        // }
+
+        // return out;
     }
+
 
     /**
      * Prints out the current centeroids-map. Its for debug or technical
