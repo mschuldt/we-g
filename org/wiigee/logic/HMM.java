@@ -255,6 +255,41 @@ public class HMM {
         return s;
     }
 
+    double[] f;
+    double[] s;
+    boolean started;
+
+    void forwardProc3_helper(int o){
+        if (started == false){
+            for (int l = 0; l < numStates; l++) {
+                s[l] = pi[l] * b[l][o];
+            }
+            started = true;
+        }else{
+            double[] tmp;
+            for (int k = 0; k < numStates; k++) {
+                double sum = 0;
+                for (int l = 0; l < numStates; l++) {
+                    sum += s[l] * a[l][k];
+                }
+                f[k] = sum * b[k][o];
+            }
+            tmp = f;
+            f = s;
+            s = tmp;
+        }
+    }
+
+    protected double[] forwardProc3(int[] o){
+        f = new double[numStates];
+        s = new double[numStates];
+        started = false;
+        for (int i = 0; i < o.length; i++) {
+            forwardProc3_helper(o[i]);
+        }
+        return s;
+    }
+
     /**
      * Returns the probability that a observation sequence O belongs
      * to this Hidden Markov Model without using the bayes classifier.
@@ -272,15 +307,17 @@ public class HMM {
     //     }
     //     return prob;
     // }
+
     public double getProbability(int[] o) {
         double prob = 0.0;
-        double[] forward = this.forwardProc2(o);
+        //double[] forward = this.forwardProc2(o);
+        double[] forward = this.forwardProc3(o);
         //	add probabilities
         for (int i = 0; i < forward.length; i++) { // for every state
             prob += forward[i];
         }
         return prob;
-    }    
+    }
 
 
     /**
