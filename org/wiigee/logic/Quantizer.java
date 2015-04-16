@@ -167,11 +167,12 @@ public class Quantizer {
 
         // Calculate cartesian distance
         double[][] d = new double[this.map.length][data.size()];
+        //d[i][j] will be the distance from centroid i to accelerometer val j
         double[] curr = new double[3];
         double[] vector = new double[3];
-        for (int i = 0; i < this.map.length; i++) { // zeilen
+        for (int i = 0; i < this.map.length; i++) { // zeilen => rows
             double[] ref = this.map[i];
-            for (int j = 0; j < data.size(); j++) { // spalten
+            for (int j = 0; j < data.size(); j++) { // spalten => columns
 
                 curr[0] = data.elementAt(j).getX();
                 curr[1] = data.elementAt(j).getY();
@@ -180,6 +181,7 @@ public class Quantizer {
                 vector[0] = ref[0] - curr[0];
                 vector[1] = ref[1] - curr[1];
                 vector[2] = ref[2] - curr[2];
+                //is sqrt necessary here? why would using the square not be ok?
                 d[i][j] = Math.sqrt((vector[0] * vector[0])
                                     + (vector[1] * vector[1]) + (vector[2] * vector[2]));
                 // Log.write(d[i][j] + "|");
@@ -198,7 +200,7 @@ public class Quantizer {
                 }
                 groups[i][j] = 0;
             }
-            groups[row][j] = 1; // guppe gesetzt => "group set"
+            groups[row][j] = 1; // guppe gesetzt ==> 'set group'
         }
 
         // Debug output
