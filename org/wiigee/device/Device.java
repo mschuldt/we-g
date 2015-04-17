@@ -1,7 +1,7 @@
 /*
  * wiigee - accelerometerbased gesture recognition
  * Copyright (C) 2007, 2008, 2009 Benjamin Poppinga
- * 
+ *
  * Developed at University of Oldenburg
  * Contact: wiigee@benjaminpoppinga.de
  *
@@ -16,12 +16,17 @@
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU Lesser General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU Lesser General Public License along
  * with this program; if not, write to the Free Software Foundation, Inc.,
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
 package org.wiigee.device;
+
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
+import java.io.FileReader;
+import java.io.FileWriter;
 
 import java.io.IOException;
 import java.util.Vector;
@@ -160,6 +165,87 @@ public class Device {
 
     public void saveGesture(int id, String filename) {
         this.processingunit.saveGesture(id, filename);
+    }
+    public void write_c_file(String filename){
+        Classifier c = this.processingunit.classifier;
+        Quantizer q;
+        HMM h;
+        GestureModel g;
+        try {
+            BufferedWriter o = new BufferedWriter(new FileWriter(filename));
+            int len = c.gesturemodel.size();
+            o.write("gesture *g;\n");
+            o.write(Integer.toString(len));
+            o.write(");\n");
+            for (int i = 0; i < len; i++){
+                g = c.getGestureModel(i);
+                q = g.getQuantizer();
+                h = g.getHMM();
+                int numStates = g.getNumStates();
+                int numObservations = g.getNumObservations();
+                double defaultProbability = g.getDefaultProbability();
+                o.write("g = new_gesture();\n");
+                o.write("g->numStates = ");
+                o.write(Integer.toString(numStates)); o.write(";\n");
+                o.write("g->numObservations = "+Integer.toString(numObservations)+";\n");
+                o.write("g->defaultProbability = ");
+                o.write(Double.toString(defaultProbability)); o.write(";\n");
+
+                o.write("//Quantizer\n");
+                o.write("g->quantizerRadius = ");
+                o.write(Double.toString(q.getRadius())); o.write(";\n");
+                o.write("g->quantizerMap = {");
+                double[][] map = q.getHashMap();
+                for (int j=0; j<map.length; j++){
+                    double[] d = map[j];
+                    o.write("{");
+                    o.write(Double.toString(d[0])+",");
+                    o.write(Double.toString(d[1])+",");
+                    o.write(Double.toString(d[2]));
+                    o.write(j<map.length-1?"},\n":"}");
+                }
+                o.write("};\n");
+
+                o.write("//HMM PI\n");
+
+                o.write("g->PI = {");
+                double[] pi = h.getPi();
+                for (int j=0; j<numStates; j++) {
+                    o.write(Double.toString(pi[j]) + (j<numStates-1?", ":"};\n"));
+                }
+
+                o.write("//HMM A\n");
+
+                o.write("g->A = {");
+                double[][] a = h.getA();
+                for (int j=0; j<numStates; j++) {
+                    o.write("{");
+                    for (int k=0; k < numStates; k++) {
+                        o.write(Double.toString(a[j][k])+(k<numStates-1?",":""));
+                    }
+                    o.write(j<numStates-1?"},\n":"}");
+                }
+                o.write("};\n\n");
+
+
+                o.write("//HMM B;\n");
+                o.write("g->A = {");
+                double[][] b = h.getB();
+                for (int j=0; j<numStates; j++) {
+                    o.write("{");
+                    for (int k=0; k<numStates; k++) {
+                        o.write(Double.toString(b[j][k])+(k<numStates-1?",":""));
+                    }
+                    o.write(j<numStates-1?"},\n":"}");
+                }
+                o.write("};\n\n");
+            }
+            o.flush();
+            o.close();
+        }catch (IOException e) {
+            System.out.println("Error: Write to File!");
+            e.printStackTrace();
+        }
     }
 
     // ###### Event-Methoden

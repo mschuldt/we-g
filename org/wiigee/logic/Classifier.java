@@ -28,7 +28,7 @@ import java.util.Vector;
 
 public class Classifier {
 
-    private Vector<GestureModel> gesturemodel; // each gesturetype got its own
+    public Vector<GestureModel> gesturemodel; // each gesturetype got its own
     // gesturemodel in this vector
     private double lastprob;
 

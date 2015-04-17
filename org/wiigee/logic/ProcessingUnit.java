@@ -16,7 +16,7 @@ import org.wiigee.util.Log;
 public abstract class ProcessingUnit implements AccelerationListener, ButtonListener {
 
     // Classifier
-    protected Classifier classifier;
+    public Classifier classifier;
 
     // Listener
     private Vector<GestureListener> gesturelistener = new Vector<GestureListener>();

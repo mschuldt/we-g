@@ -255,7 +255,7 @@ public class Quantizer {
 
         for(;i < size;i++) groups[i] = last;
 
-        // return groups;
+        return groups;
 
         // int[][] groups = this.deriveGroups(gesture);
         // Vector<Integer> sequence = new Vector<Integer>();

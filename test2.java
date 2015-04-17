@@ -108,5 +108,6 @@ public class test2{
         recognize_gesture("gesture_recordings/roll_flip/15.csv");
         recognize_gesture("gesture_recordings/roll_flip/16.csv");
 
+        device.write_c_file("models.c");
     }
 }
