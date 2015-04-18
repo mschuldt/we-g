@@ -174,9 +174,8 @@ public class Device {
         try {
             BufferedWriter o = new BufferedWriter(new FileWriter(filename));
             int len = c.gesturemodel.size();
-            o.write("gesture *g;\n");
-            o.write(Integer.toString(len));
-            o.write(");\n");
+            o.write("model *m;\n");
+            o.write("int n_models = "+Integer.toString(len)+";\n");
             for (int i = 0; i < len; i++){
                 g = c.getGestureModel(i);
                 q = g.getQuantizer();
@@ -184,17 +183,17 @@ public class Device {
                 int numStates = g.getNumStates();
                 int numObservations = g.getNumObservations();
                 double defaultProbability = g.getDefaultProbability();
-                o.write("g = new_gesture();\n");
-                o.write("g->numStates = ");
+                o.write("m = new_model();\n");
+                o.write("m->numStates = ");
                 o.write(Integer.toString(numStates)); o.write(";\n");
-                o.write("g->numObservations = "+Integer.toString(numObservations)+";\n");
-                o.write("g->defaultProbability = ");
+                o.write("m->numObservations = "+Integer.toString(numObservations)+";\n");
+                o.write("m->defaultProbability = ");
                 o.write(Double.toString(defaultProbability)); o.write(";\n");
 
                 o.write("//Quantizer\n");
-                o.write("g->quantizerRadius = ");
+                o.write("m->quantizerRadius = ");
                 o.write(Double.toString(q.getRadius())); o.write(";\n");
-                o.write("g->quantizerMap = {");
+                o.write("m->quantizerMap = {");
                 double[][] map = q.getHashMap();
                 for (int j=0; j<map.length; j++){
                     double[] d = map[j];
@@ -208,7 +207,7 @@ public class Device {
 
                 o.write("//HMM PI\n");
 
-                o.write("g->PI = {");
+                o.write("m->PI = {");
                 double[] pi = h.getPi();
                 for (int j=0; j<numStates; j++) {
                     o.write(Double.toString(pi[j]) + (j<numStates-1?", ":"};\n"));
@@ -216,7 +215,7 @@ public class Device {
 
                 o.write("//HMM A\n");
 
-                o.write("g->A = {");
+                o.write("m->A = {");
                 double[][] a = h.getA();
                 for (int j=0; j<numStates; j++) {
                     o.write("{");
@@ -229,7 +228,7 @@ public class Device {
 
 
                 o.write("//HMM B;\n");
-                o.write("g->A = {");
+                o.write("g->B = {");
                 double[][] b = h.getB();
                 for (int j=0; j<numStates; j++) {
                     o.write("{");
