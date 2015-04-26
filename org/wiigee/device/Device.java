@@ -174,8 +174,12 @@ public class Device {
         try {
             BufferedWriter o = new BufferedWriter(new FileWriter(filename));
             int len = c.gesturemodel.size();
+            o.write("#include \"hmm.h\"\n");
             o.write("model *m;\n");
             o.write("int n_models = "+Integer.toString(len)+";\n");
+            o.write("void init_models(){\n");
+            o.write("double* tmp;\n");
+            o.write("models = (model**)malloc(sizeof(model*)*n_models);\n");
             for (int i = 0; i < len; i++){
                 g = c.getGestureModel(i);
                 q = g.getQuantizer();
@@ -193,52 +197,47 @@ public class Device {
                 o.write("//Quantizer\n");
                 o.write("m->quantizerRadius = ");
                 o.write(Double.toString(q.getRadius())); o.write(";\n");
-                o.write("m->quantizerMap = {");
                 double[][] map = q.getHashMap();
+                o.write("m->quantizerMap = (double**)malloc(sizeof(double*)*"+map.length+");\n");
                 for (int j=0; j<map.length; j++){
                     double[] d = map[j];
-                    o.write("{");
-                    o.write(Double.toString(d[0])+",");
-                    o.write(Double.toString(d[1])+",");
-                    o.write(Double.toString(d[2]));
-                    o.write(j<map.length-1?"},\n":"}");
+                    o.write("tmp = m->quantizerMap["+j+"] = (double*)malloc(sizeof(double)*3);\n");
+                    o.write("tmp[0] = "+Double.toString(d[0])+";\n");
+                    o.write("tmp[1] = "+Double.toString(d[1])+";\n");
+                    o.write("tmp[2] = "+Double.toString(d[2])+";\n");
                 }
-                o.write("};\n");
+
 
                 o.write("//HMM PI\n");
 
-                o.write("m->PI = {");
+                o.write("tmp = m->PI = (double*)malloc(sizeof(double)*"+numStates+");\n");
                 double[] pi = h.getPi();
                 for (int j=0; j<numStates; j++) {
-                    o.write(Double.toString(pi[j]) + (j<numStates-1?", ":"};\n"));
+                    o.write("tmp["+j+"] = " + Double.toString(pi[j]) + ";\n");
                 }
 
                 o.write("//HMM A\n");
 
-                o.write("m->A = {");
+                o.write("m->A = (double**)malloc(sizeof(double*)*"+numStates+");\n");
                 double[][] a = h.getA();
                 for (int j=0; j<numStates; j++) {
-                    o.write("{");
+                    o.write("tmp = m->A["+j+"] = (double*)malloc(sizeof(double)*"+numStates+");\n");
                     for (int k=0; k < numStates; k++) {
-                        o.write(Double.toString(a[j][k])+(k<numStates-1?",":""));
+                        o.write("tmp["+k+"]="+Double.toString(a[j][k])+";\n");
                     }
-                    o.write(j<numStates-1?"},\n":"}");
                 }
-                o.write("};\n\n");
-
 
                 o.write("//HMM B;\n");
-                o.write("g->B = {");
+                o.write("m->B = (double**)malloc(sizeof(double*)*"+numStates+");\n");
                 double[][] b = h.getB();
                 for (int j=0; j<numStates; j++) {
-                    o.write("{");
-                    for (int k=0; k<numStates; k++) {
-                        o.write(Double.toString(b[j][k])+(k<numStates-1?",":""));
+                    o.write("tmp = m->B["+j+"] = (double*)malloc(sizeof(double)*"+numObservations+");\n");
+                    for (int k=0; k < numObservations; k++) {
+                        o.write("tmp["+k+"]="+Double.toString(b[j][k])+";\n");
                     }
-                    o.write(j<numStates-1?"},\n":"}");
                 }
-                o.write("};\n\n");
             }
+            o.write("}\n");
             o.flush();
             o.close();
         }catch (IOException e) {
