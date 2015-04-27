@@ -191,20 +191,20 @@ public class Device {
                 o.write("m->numStates = ");
                 o.write(Integer.toString(numStates)); o.write(";\n");
                 o.write("m->numObservations = "+Integer.toString(numObservations)+";\n");
-                o.write("m->defaultProbability = ");
-                o.write(Double.toString(defaultProbability)); o.write(";\n");
+                o.write("m->defaultProbability = d2fp(");
+                o.write(Double.toString(defaultProbability)); o.write(");\n");
 
                 o.write("//Quantizer\n");
-                o.write("m->quantizerRadius = ");
-                o.write(Double.toString(q.getRadius())); o.write(";\n");
+                o.write("m->quantizerRadius = d2fp(");
+                o.write(Double.toString(q.getRadius())); o.write(");\n");
                 double[][] map = q.getHashMap();
                 o.write("m->quantizerMap = (double**)malloc(sizeof(double*)*"+map.length+");\n");
                 for (int j=0; j<map.length; j++){
                     double[] d = map[j];
                     o.write("tmp = m->quantizerMap["+j+"] = (double*)malloc(sizeof(double)*3);\n");
-                    o.write("tmp[0] = "+Double.toString(d[0])+";\n");
-                    o.write("tmp[1] = "+Double.toString(d[1])+";\n");
-                    o.write("tmp[2] = "+Double.toString(d[2])+";\n");
+                    o.write("tmp[0] = d2fp("+Double.toString(d[0])+");\n");
+                    o.write("tmp[1] = d2fp("+Double.toString(d[1])+");\n");
+                    o.write("tmp[2] = d2fp("+Double.toString(d[2])+");\n");
                 }
 
 
@@ -213,7 +213,7 @@ public class Device {
                 o.write("tmp = m->PI = (double*)malloc(sizeof(double)*"+numStates+");\n");
                 double[] pi = h.getPi();
                 for (int j=0; j<numStates; j++) {
-                    o.write("tmp["+j+"] = " + Double.toString(pi[j]) + ";\n");
+                    o.write("tmp["+j+"] = d2fp(" + Double.toString(pi[j]) + ");\n");
                 }
 
                 o.write("//HMM A\n");
@@ -223,7 +223,7 @@ public class Device {
                 for (int j=0; j<numStates; j++) {
                     o.write("tmp = m->A["+j+"] = (double*)malloc(sizeof(double)*"+numStates+");\n");
                     for (int k=0; k < numStates; k++) {
-                        o.write("tmp["+k+"]="+Double.toString(a[j][k])+";\n");
+                        o.write("tmp["+k+"]=d2fp("+Double.toString(a[j][k])+");\n");
                     }
                 }
 
@@ -233,7 +233,7 @@ public class Device {
                 for (int j=0; j<numStates; j++) {
                     o.write("tmp = m->B["+j+"] = (double*)malloc(sizeof(double)*"+numObservations+");\n");
                     for (int k=0; k < numObservations; k++) {
-                        o.write("tmp["+k+"]="+Double.toString(b[j][k])+";\n");
+                        o.write("tmp["+k+"]=d2fp("+Double.toString(b[j][k])+");\n");
                     }
                 }
             }
