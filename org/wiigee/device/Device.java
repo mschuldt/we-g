@@ -246,6 +246,109 @@ public class Device {
         }
     }
 
+    public void write_cll_file(String filename){
+        Classifier c = this.processingunit.classifier;
+        Quantizer q;
+        HMM h;
+        GestureModel g;
+        try {
+            BufferedWriter o = new BufferedWriter(new FileWriter(filename));
+            int len = c.gesturemodel.size();
+            for (int i = 0; i < len; i++){
+                g = c.getGestureModel(i);
+                q = g.getQuantizer();
+                h = g.getHMM();
+                int numStates = g.getNumStates();
+                int numObservations = g.getNumObservations();
+                double defaultProbability = g.getDefaultProbability();
+                o.write("hmm"+i+" = new Hmm(\n");
+
+                double[][] map = q.getHashMap();
+                o.write("//Quantizer x\n");
+                o.write("{");
+                for (int j=0; j<map.length; j++){
+                    double[] d = map[j];
+                    o.write(Double.toString(d[0]));
+                    if (j < map.length - 1) o.write(", ");
+                }
+                o.write("},\n");
+
+                o.write("//Quantizer y\n");
+                o.write("{");
+                for (int j=0; j<map.length; j++){
+                    double[] d = map[j];
+                    o.write(Double.toString(d[1]));
+                    if (j < map.length - 1) o.write(", ");
+                }
+                o.write("},\n");
+
+                o.write("//Quantizer z\n");
+                o.write("{");
+                for (int j=0; j<map.length; j++){
+                    double[] d = map[j];
+                    o.write(Double.toString(d[2]));
+                    if (j < map.length - 1) o.write(", ");
+                }
+                o.write("},\n");
+
+                o.write("//PI\n");
+                o.write("{");
+                    double[] pi = h.getPi();
+                for (int j=0; j<numStates; j++) {
+                    o.write(Double.toString(pi[j]));
+                    if (j < numStates - 1) o.write(", ");
+                }
+                o.write("},\n");
+
+
+                double[][] a = h.getA();
+                o.write("// A1\n");
+                o.write("{");
+                for (int j=0; j<3; j++) {
+                    for (int k=0; k < numStates; k++) {
+                        o.write(Double.toString(a[j][k]));
+                        if (j < 2 || k < numStates -1) o.write(", ");
+                    }
+                }
+                o.write("},\n");
+
+                o.write("// A2\n");
+                o.write("{");
+                for (int j=3; j<8; j++) {
+                    for (int k=0; k < numStates; k++) {
+                        o.write(Double.toString(a[j][k]));
+                        if (j < 7 || k < numStates - 1) o.write(", ");
+                    }
+                }
+                o.write("},\n");
+
+                double[][] b = h.getB();
+                int ii = 0;
+                int iii = 0;
+                for (int j=0; j<numObservations; j++) {
+                    for (int k=0; k < numStates; k++) {
+                        if (ii %28 == 0){
+                            iii++;
+                            if (ii!=0) o.write("},\n");
+                            o.write("//B"+iii+"\n");
+                            o.write("{");
+                        }
+                        o.write(Double.toString(b[k][j]));
+                        ii++;
+                        if (ii % 28 != 0 ) o.write(", ");
+                    }
+                }
+                o.write("}\n");
+                o.write(");\n\n");
+            }
+            o.flush();
+            o.close();
+        }catch (IOException e) {
+            System.out.println("Error: Write to File!");
+            e.printStackTrace();
+        }
+    }
+
     // ###### Event-Methoden
     /** Fires an acceleration event.
      * @param vector Consists of three values:
