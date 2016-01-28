@@ -96,18 +96,20 @@ public class test2{
 
         //test
         recognize_gesture("gesture_recordings/square2/14.csv");
-        recognize_gesture("gesture_recordings/square2/15.csv");
-        recognize_gesture("gesture_recordings/square2/16.csv");
+        //recognize_gesture("gesture_recordings/square2/15.csv");
+        //recognize_gesture("gesture_recordings/square2/16.csv");
 
         recognize_gesture("gesture_recordings/up_down/14.csv");
-        recognize_gesture("gesture_recordings/up_down/15.csv");
+        //recognize_gesture("gesture_recordings/up_down/15.csv");
 
         recognize_gesture("gesture_recordings/z/14.csv");
 
         recognize_gesture("gesture_recordings/roll_flip/14.csv");
-        recognize_gesture("gesture_recordings/roll_flip/15.csv");
-        recognize_gesture("gesture_recordings/roll_flip/16.csv");
+
+        //recognize_gesture("gesture_recordings/roll_flip/15.csv");
+        //recognize_gesture("gesture_recordings/roll_flip/16.csv");
 
         device.write_c_file("models.c");
+        device.write_cll_file("models.cll");
     }
 }

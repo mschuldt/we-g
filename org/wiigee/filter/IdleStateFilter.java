@@ -57,8 +57,8 @@ public class IdleStateFilter extends Filter {
                                     (vector[1]*vector[1])+(vector[2]*vector[2]));
 
         // filter formulaes and return values
-        if(absvalue > 1+this.sensivity ||
-           absvalue < 1-this.sensivity) {
+        if(absvalue > 0.2+this.sensivity ||
+           absvalue < 0.2-this.sensivity) {
             return vector;
         } else {
             return null;
