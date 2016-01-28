@@ -228,12 +228,25 @@ public class Device {
                 }
 
                 o.write("//HMM B;\n");
-                o.write("m->B = (double**)malloc(sizeof(double*)*"+numStates+");\n");
-                double[][] b = h.getB();
-                for (int j=0; j<numStates; j++) {
-                    o.write("tmp = m->B["+j+"] = (double*)malloc(sizeof(double)*"+numObservations+");\n");
-                    for (int k=0; k < numObservations; k++) {
-                        o.write("tmp["+k+"]=d2fp("+Double.toString(b[j][k])+");\n");
+                if (true){ // new format
+                    o.write("m->B = (double*)malloc(sizeof(double)*"+(14*8)+");\n");
+                    double[][] b = h.getB();
+                    int ii = 0;
+                    for (int j=0; j<numObservations; j++) {
+                        for (int k=0; k < numStates; k++) {
+
+                            o.write("m->B["+ii+"]=d2fp("+Double.toString(b[k][j])+");\n");
+                            ii++;
+                        }
+                    }
+                }else{
+                    o.write("m->B = (double**)malloc(sizeof(double*)*"+numStates+");\n");
+                    double[][] b = h.getB();
+                    for (int j=0; j<numStates; j++) {
+                        o.write("tmp = m->B["+j+"] = (double*)malloc(sizeof(double)*"+numObservations+");\n");
+                        for (int k=0; k < numObservations; k++) {
+                            o.write("tmp["+k+"]=d2fp("+Double.toString(b[j][k])+");\n");
+                        }
                     }
                 }
             }
